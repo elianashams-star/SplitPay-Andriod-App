@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_dark"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="34dp"
+    android:paddingBottom="20dp"
+    android:importantForAutofill="noExcludeDescendants">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Expense"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_transaction_card"
+        android:padding="16dp"
+        android:layout_marginBottom="18dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/titleInput"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text=""
+            android:hint="Enter Title"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:inputType="textCapSentences"
+            android:importantForAutofill="no"
+            android:autofillHints=""
+            android:saveEnabled="false"
+            android:layout_marginBottom="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/amountInput"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text=""
+            android:hint="Enter Amount"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:inputType="numberDecimal"
+            android:importantForAutofill="no"
+            android:autofillHints=""
+            android:saveEnabled="false"
+            android:layout_marginBottom="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Group"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/groupInput"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text=""
+            android:hint="Enter Group"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:inputType="textCapWords"
+            android:importantForAutofill="no"
+            android:autofillHints=""
+            android:saveEnabled="false"
+            android:layout_marginBottom="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Split With"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/splitNamesInput"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text=""
+            android:hint="Enter Names"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:inputType="textCapWords"
+            android:importantForAutofill="no"
+            android:autofillHints=""
+            android:saveEnabled="false"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_tabs_container"
+            android:padding="6dp">
+
+            <Button
+                android:id="@+id/statusUnsettledBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Unsettled"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/text_primary"
+                android:background="@drawable/bg_tab_selected_red"
+                android:backgroundTint="@null"
+                android:stateListAnimator="@null" />
+
+            <Button
+                android:id="@+id/statusSettledBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Settled"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_tab_unselected"
+                android:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/saveExpenseBtn"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="Save"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/accent_green" />
+
+</LinearLayout>

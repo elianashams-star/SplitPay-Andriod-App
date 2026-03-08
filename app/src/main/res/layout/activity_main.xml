@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="34dp"
+    android:paddingBottom="20dp">
+
+    <!-- Title -->
+    <TextView
+        android:text="SplitPay"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:text="Complete ledger of all transactions"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Balance Summary Card -->
+    <LinearLayout
+        android:id="@+id/balanceCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_transaction_card"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Balance Summary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="You are owed"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/owedAmountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/accent_green" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="You owe"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/oweAmountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/accent_red" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Net balance"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/netAmountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Filter Tabs Container -->
+    <LinearLayout
+        android:id="@+id/tabContainer"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_tabs_container"
+        android:padding="6dp"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/tabAll"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="All"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:minWidth="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:gravity="center"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/bg_tab_selected"
+            android:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:foreground="?attr/selectableItemBackground" />
+
+        <Button
+            android:id="@+id/tabIncoming"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Incoming"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:minWidth="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:gravity="center"
+            android:textColor="@color/text_secondary"
+            android:background="@drawable/bg_tab_unselected"
+            android:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginStart="4dp" />
+
+        <Button
+            android:id="@+id/tabOutgoing"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Outgoing"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:minWidth="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:gravity="center"
+            android:textColor="@color/text_secondary"
+            android:background="@drawable/bg_tab_unselected"
+            android:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginStart="4dp" />
+
+        <Button
+            android:id="@+id/tabAutoPay"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Auto-Pay"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:minWidth="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:gravity="center"
+            android:textColor="@color/text_secondary"
+            android:background="@drawable/bg_tab_unselected"
+            android:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginStart="4dp" />
+
+    </LinearLayout>
+
+    <!-- Add Expense Button -->
+    <Button
+        android:id="@+id/addExpenseBtn"
+        android:text="Add Expense"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:backgroundTint="@color/accent_green"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Recycler -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/expenseRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

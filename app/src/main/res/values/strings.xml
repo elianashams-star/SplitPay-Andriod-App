@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SPLITPAY</string>
+    <string-array name="status_options">
+        <item>Unsettled</item>
+        <item>Settled</item>
+    </string-array>
+</resources>
