@@ -13,12 +13,20 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private ArrayList<Expense> allExpenses;
     private ArrayList<Expense> displayedExpenses;
@@ -31,11 +39,16 @@ public class MainActivity extends AppCompatActivity {
     private Button tabAll, tabIncoming, tabOutgoing, tabAutoPay;
 
     private TextView owedAmountText, oweAmountText, netAmountText;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        db = FirebaseFirestore.getInstance();
+        loadExpenses();
 
         recyclerView = findViewById(R.id.expenseRecycler);
         Button addExpenseBtn = findViewById(R.id.addExpenseBtn);
@@ -104,16 +117,19 @@ public class MainActivity extends AppCompatActivity {
         tabIncoming.setOnClickListener(v -> {
             setSelectedTab(tabIncoming);
             showIncomingExpenses();
+            logFilterEvent("incoming");
         });
 
         tabOutgoing.setOnClickListener(v -> {
             setSelectedTab(tabOutgoing);
             showOutgoingExpenses();
+            logFilterEvent("outgoing");
         });
 
         tabAutoPay.setOnClickListener(v -> {
             setSelectedTab(tabAutoPay);
             showAutoPayExpenses();
+            logFilterEvent("autopay");
         });
 
         addExpenseLauncher = registerForActivityResult(
@@ -151,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
                         allExpenses.add(0, newExpense);
                         updateBalanceSummary();
 
+                        logAddExpenseEvent(group, amount);
+
                         if (tabAll.isSelected()) {
                             showAllExpenses();
                         } else if (tabIncoming.isSelected()) {
@@ -167,9 +185,46 @@ public class MainActivity extends AppCompatActivity {
         );
 
         addExpenseBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
+            Intent intent = new Intent(this, AddExpenseActivity.class);
             addExpenseLauncher.launch(intent);
         });
+    }
+
+    private void loadExpenses() {db.collection("expenses")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener((snapshots, error) -> {
+                if (error != null) {
+                    FirebaseCrashlytics.getInstance().recordException(error);
+                    return;
+                }
+                allExpenses.clear();
+                for (QueryDocumentSnapshot doc : snapshots) {
+                    String title = doc.getString("title");
+                    String merchant = doc.getString("merchant");
+                    double amount = doc.getDouble("amount") != null ? doc.getDouble("amount") : 0;
+                    String group = doc.getString("group");
+                    String date = doc.getString("date");
+                    String paymentMethod = doc.getString("paymentMethod");
+                    String referenceId = doc.getString("referenceId");
+                    boolean isIncoming = doc.getBoolean("isIncoming") != null ? doc.getBoolean("isIncoming") : false;
+                    allExpenses.add(new Expense(title, merchant, amount, group, date, paymentMethod, referenceId, isIncoming));
+                }
+                updateBalanceSummary();
+                showAllExpenses();
+            });
+    }
+
+    private void logAddExpenseEvent(String category, double amount) {
+        Bundle params = new Bundle();
+        params.putString("expense_category", category);
+        params.putDouble("expense_amount", amount);
+        mFirebaseAnalytics.logEvent("add_expense", params);
+    }
+
+    private void logFilterEvent(String filterType) {
+        Bundle params = new Bundle();
+        params.putString("filter_type", filterType);
+        mFirebaseAnalytics.logEvent("transaction_filter", params);
     }
 
     private void showAllExpenses() {
@@ -254,4 +309,3 @@ public class MainActivity extends AppCompatActivity {
         return s == null ? "" : s.trim();
     }
 }
-

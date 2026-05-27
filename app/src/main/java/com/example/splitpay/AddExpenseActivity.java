@@ -8,9 +8,14 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class AddExpenseActivity extends AppCompatActivity {
 
@@ -75,10 +80,8 @@ public class AddExpenseActivity extends AppCompatActivity {
 
             if (group.isEmpty()) group = "General";
 
-            // Normalize names input: "Ori,Naomi" -> "Ori, Naomi"
             String splitNames = splitNamesRaw.replaceAll("\\s*,\\s*", ", ").trim();
 
-            // Count people from names (Ori, Naomi -> 2). If blank, treat as 1.
             int peopleCount = 1;
             if (!splitNames.isEmpty()) {
                 String[] parts = splitNames.split(",");
@@ -89,7 +92,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                 peopleCount = Math.max(1, count);
             }
 
-            // Build the line that shows under the title on the main list
             String merchant;
             int splitCount;
             if (splitNames.isEmpty()) {
@@ -106,6 +108,20 @@ public class AddExpenseActivity extends AppCompatActivity {
 
             boolean isIncoming = "Settled".equalsIgnoreCase(selectedStatus);
 
+            // Write to Firestore
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Map<String, Object> expense = new HashMap<>();
+            expense.put("title", title);
+            expense.put("merchant", merchant);
+            expense.put("amount", amount);
+            expense.put("group", group);
+            expense.put("date", date);
+            expense.put("paymentMethod", paymentMethod);
+            expense.put("referenceId", referenceId);
+            expense.put("isIncoming", isIncoming);
+            expense.put("timestamp", FieldValue.serverTimestamp());
+            db.collection("expenses").add(expense);
+
             Intent data = new Intent();
             data.putExtra("title", title);
             data.putExtra("merchant", merchant);
@@ -115,10 +131,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             data.putExtra("paymentMethod", paymentMethod);
             data.putExtra("referenceId", referenceId);
             data.putExtra("isIncoming", isIncoming);
-
             data.putExtra("splitNames", splitNames);
-
-            // Optional extras
             data.putExtra("splitCount", splitCount);
             data.putExtra("status", selectedStatus);
 
@@ -133,17 +146,13 @@ public class AddExpenseActivity extends AppCompatActivity {
         statusSettledBtn.setBackgroundTintList(null);
 
         if (unsettledSelected) {
-            // Outgoing selected: RED background
             statusUnsettledBtn.setBackgroundResource(R.drawable.bg_tab_selected_red);
             statusSettledBtn.setBackgroundResource(R.drawable.bg_tab_unselected);
-
             statusUnsettledBtn.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
             statusSettledBtn.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
         } else {
-            // Incoming selected: GREEN background
             statusSettledBtn.setBackgroundResource(R.drawable.bg_tab_selected);
             statusUnsettledBtn.setBackgroundResource(R.drawable.bg_tab_unselected);
-
             statusSettledBtn.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
             statusUnsettledBtn.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
         }

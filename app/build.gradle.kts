@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -9,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.splitpay"
+        applicationId = "com.splitpay.app"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -41,4 +43,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-firestore")
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }
