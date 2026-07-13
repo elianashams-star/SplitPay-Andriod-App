@@ -8,18 +8,21 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.HashMap;
 
 public class AddExpenseActivity extends AppCompatActivity {
 
-    private EditText titleInput, amountInput, groupInput, splitNamesInput;
+    private EditText titleInput, amountInput, groupInput, paidByInput, splitNamesInput;
     private Button statusUnsettledBtn, statusSettledBtn, saveExpenseBtn;
 
     private String selectedStatus = "Unsettled";
@@ -27,16 +30,19 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!AuthGuard.requireSignIn(this)) return;
+
         setContentView(R.layout.activity_add_expense);
 
         titleInput = findViewById(R.id.titleInput);
         amountInput = findViewById(R.id.amountInput);
         groupInput = findViewById(R.id.groupInput);
+        paidByInput = findViewById(R.id.paidByInput);
         splitNamesInput = findViewById(R.id.splitNamesInput);
 
         statusUnsettledBtn = findViewById(R.id.statusUnsettledBtn);
         statusSettledBtn = findViewById(R.id.statusSettledBtn);
-
         saveExpenseBtn = findViewById(R.id.saveExpenseBtn);
 
         statusUnsettledBtn.setBackgroundTintList(null);
@@ -58,6 +64,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             String title = titleInput.getText().toString().trim();
             String amountStr = amountInput.getText().toString().trim();
             String group = groupInput.getText().toString().trim();
+            String paidByRaw = paidByInput.getText().toString().trim();
             String splitNamesRaw = splitNamesInput.getText().toString().trim();
 
             if (title.isEmpty()) {
@@ -80,21 +87,23 @@ public class AddExpenseActivity extends AppCompatActivity {
 
             if (group.isEmpty()) group = "General";
 
+            String paidBy = paidByRaw.isEmpty() ? "You" : paidByRaw;
+
             String splitNames = splitNamesRaw.replaceAll("\\s*,\\s*", ", ").trim();
 
-            int peopleCount = 1;
+            List<String> splitNamesList = new ArrayList<>();
             if (!splitNames.isEmpty()) {
-                String[] parts = splitNames.split(",");
-                int count = 0;
-                for (String p : parts) {
-                    if (!p.trim().isEmpty()) count++;
+                for (String name : splitNames.split(",")) {
+                    String trimmed = name.trim();
+                    if (!trimmed.isEmpty()) splitNamesList.add(trimmed);
                 }
-                peopleCount = Math.max(1, count);
             }
+
+            int peopleCount = Math.max(1, splitNamesList.size());
 
             String merchant;
             int splitCount;
-            if (splitNames.isEmpty()) {
+            if (splitNamesList.isEmpty()) {
                 merchant = "Manual entry";
                 splitCount = 1;
             } else {
@@ -108,7 +117,8 @@ public class AddExpenseActivity extends AppCompatActivity {
 
             boolean isIncoming = "Settled".equalsIgnoreCase(selectedStatus);
 
-            // Write to Firestore
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Map<String, Object> expense = new HashMap<>();
             expense.put("title", title);
@@ -119,6 +129,9 @@ public class AddExpenseActivity extends AppCompatActivity {
             expense.put("paymentMethod", paymentMethod);
             expense.put("referenceId", referenceId);
             expense.put("isIncoming", isIncoming);
+            expense.put("splitNames", splitNamesList);
+            expense.put("paidBy", paidBy);
+            expense.put("userId", uid);
             expense.put("timestamp", FieldValue.serverTimestamp());
             db.collection("expenses").add(expense);
 
@@ -134,6 +147,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             data.putExtra("splitNames", splitNames);
             data.putExtra("splitCount", splitCount);
             data.putExtra("status", selectedStatus);
+            data.putExtra("paidBy", paidBy);
 
             setResult(RESULT_OK, data);
             finish();

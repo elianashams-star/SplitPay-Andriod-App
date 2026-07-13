@@ -15,4 +15,13 @@
 
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#CBD5E1</color>
+
+    <color name="avatar_blue">#3B82F6</color>
+    <color name="avatar_purple">#A855F7</color>
+    <color name="avatar_orange">#F97316</color>
+    <color name="avatar_teal">#14B8A6</color>
+    <color name="avatar_pink">#EC4899</color>
+
+    <color name="pill_green_bg">#14301F</color>
+    <color name="pill_red_bg">#3A1717</color>
 </resources>

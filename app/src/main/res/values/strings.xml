@@ -4,4 +4,5 @@
         <item>Unsettled</item>
         <item>Settled</item>
     </string-array>
+    <string name="default_web_client_id">7154361374-3630e57rckan974p7dl525tr4bdkhnjt.apps.googleusercontent.com</string>
 </resources>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "7154361374",
+    "project_id": "splitpay-da2a7",
+    "storage_bucket": "splitpay-da2a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:7154361374:android:653837a4790e6e5decfa0f",
+        "android_client_info": {
+          "package_name": "com.splitpay.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "7154361374-gp6qhkr1f5l984cv9rpvl9b2qarpnhf2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.splitpay.app",
+            "certificate_hash": "5f0d1edecbb957bdee013737b914825fe86e5429"
+          }
+        },
+        {
+          "client_id": "7154361374-3630e57rckan974p7dl525tr4bdkhnjt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjQdV0UzqrSxhu9IwUSjg2sQooeIfNd08"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "7154361374-3630e57rckan974p7dl525tr4bdkhnjt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
