@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Two-layer access gate: first confirm a Google account is signed
+        // in (AuthGuard), then, if the user opted into it on Account,
+        // require a fresh fingerprint check for this app session before
+        // any screen content loads (BiometricLockHelper). Neither check
+        // blocks the other — both must pass to reach Home.
         if (!AuthGuard.requireSignIn(this)) return;
 
         if (BiometricLockHelper.isLockEnabled(this) && !BiometricLockHelper.isSessionUnlocked()) {
@@ -115,6 +120,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Live listener scoped to the signed-in user only (whereEqualTo userId),
+    // ordered by timestamp. This combination — a filter on one field plus a
+    // sort on another — requires a Firestore composite index; without it,
+    // the listener fails silently and Home stops updating in real time.
     private void loadExpenses() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -181,6 +190,10 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    // "You owe" = someone other than you paid, so your share of that
+    // expense is money you owe them. Legacy expenses with no splitNames
+    // (created before this feature existed) fall back to the older
+    // isIncoming flag instead.
     private boolean isYouOweExpense(Expense expense) {
         List<String> splitNames = expense.getSplitNames();
         String paidBy = expense.getPaidBy();
@@ -205,6 +218,15 @@ public class MainActivity extends AppCompatActivity {
         selectedTab.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
     }
 
+    // Core balance math, shared in spirit with Groups and Group Detail:
+    // each expense's amount is divided evenly across everyone in
+    // splitNames plus the current user (the "+1"), since the user is
+    // always an implicit participant even though they're never listed
+    // by name. Whoever paid (paidBy) determines whether the user's
+    // share counts as money owed to them or money they owe someone else.
+    // Expenses with no splitNames (added before per-person splitting
+    // existed) fall back to treating the full amount as owed/owe based
+    // on the isIncoming flag.
     private void updateBalanceSummary() {
         double owed = 0;
         double owe = 0;

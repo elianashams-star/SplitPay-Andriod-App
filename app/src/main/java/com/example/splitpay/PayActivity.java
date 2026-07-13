@@ -61,6 +61,8 @@ public class PayActivity extends AppCompatActivity {
 
         payTitleText.setText("Pay " + personName);
         paySubtitleText.setText(String.format(Locale.US, "You owe $%.2f in %s", owedAmount, groupName));
+        // Pre-filled with the full amount owed but left editable, so a
+        // partial payment is possible.
         amountInput.setText(String.format(Locale.US, "%.2f", owedAmount));
 
         db = FirebaseFirestore.getInstance();
@@ -71,6 +73,9 @@ public class PayActivity extends AppCompatActivity {
         payMethodRecycler.setLayoutManager(new LinearLayoutManager(this));
         payMethodRecycler.setAdapter(adapter);
 
+        // Payment methods are read from Account's saved list — Pay never
+        // collects card details itself, it only lets the user choose
+        // among what's already saved.
         db.collection("users").document(uid).collection("paymentMethods")
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null || snapshots == null) return;
@@ -111,6 +116,12 @@ public class PayActivity extends AppCompatActivity {
             String date = new SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.US).format(new Date());
             String referenceId = "SP-" + System.currentTimeMillis();
 
+            // No real money moves. Confirming writes a settlement expense
+            // to Firestore, tagged isSettlement=true and settlementTo=the
+            // person being paid. GroupDetailActivity and GroupsActivity
+            // both recognize this flag and apply it directly to that
+            // person's balance rather than running it through the normal
+            // split math, since a payment isn't a new shared expense.
             Map<String, Object> expense = new HashMap<>();
             expense.put("title", "Payment to " + personName);
             expense.put("merchant", "Settlement");

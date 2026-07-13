@@ -50,6 +50,8 @@ public class GroupDetailActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         peopleList = new ArrayList<>();
+        // Tapping "Pay" on a person's row hands their name, this group,
+        // and how much is owed (as a positive number) over to PayActivity.
         adapter = new PersonBalanceAdapter(peopleList, person -> {
             Intent intent = new Intent(GroupDetailActivity.this, PayActivity.class);
             intent.putExtra(PayActivity.EXTRA_PERSON_NAME, person.getName());
@@ -63,6 +65,11 @@ public class GroupDetailActivity extends AppCompatActivity {
         loadGroupDetail();
     }
 
+    // Builds a per-person balance breakdown for this group, relative to
+    // the signed-in user only — it does not calculate what one other
+    // named person owes another. Two kinds of documents are read here:
+    // regular expenses (which get split across participants) and
+    // settlement expenses (written by PayActivity when a debt is paid).
     private void loadGroupDetail() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -81,6 +88,10 @@ public class GroupDetailActivity extends AppCompatActivity {
                         Double amount = doc.getDouble("amount");
                         double amt = amount != null ? amount : 0;
 
+                        // Settlement documents (from PayActivity) reduce the
+                        // paid-to person's balance directly by the paid
+                        // amount, rather than going through the split math
+                        // below — a payment isn't a new shared expense.
                         if (isSettlement != null && isSettlement) {
                             String settlementTo = doc.getString("settlementTo");
                             String title = doc.getString("title");
@@ -108,20 +119,32 @@ public class GroupDetailActivity extends AppCompatActivity {
                         List<String> splitNames = (List<String>) doc.get("splitNames");
                         if (splitNames == null || splitNames.isEmpty()) continue;
 
+                        // Make sure every named participant shows up in the
+                        // list even if their net balance ends up at $0
+                        // (shown as "Settled" rather than disappearing).
                         for (String person : splitNames) {
                             balances.putIfAbsent(person, 0.0);
                             personMap.putIfAbsent(person, new PersonBalance(person, 0));
                         }
 
+                        // Same share formula as everywhere else in the app:
+                        // amount divided across splitNames plus the current
+                        // user (+1), since the user is never listed by name
+                        // but is always an implicit participant.
                         double share = amt / (splitNames.size() + 1);
 
                         if (paidBy.equalsIgnoreCase("You")) {
+                            // You paid — everyone in splitNames owes you
+                            // their share.
                             for (String person : splitNames) {
                                 double current = balances.getOrDefault(person, 0.0);
                                 balances.put(person, current + share);
                                 personMap.get(person).addContribution(title, share);
                             }
                         } else {
+                            // Someone else paid — you owe just your own
+                            // share to them. Debts between two other named
+                            // people are intentionally not tracked here.
                             double current = balances.getOrDefault(paidBy, 0.0);
                             balances.put(paidBy, current - share);
                             personMap.get(paidBy).addContribution(title, -share);

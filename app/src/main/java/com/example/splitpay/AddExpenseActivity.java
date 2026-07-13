@@ -87,8 +87,15 @@ public class AddExpenseActivity extends AppCompatActivity {
 
             if (group.isEmpty()) group = "General";
 
+            // "Paid By" defaults to "You" when left blank — this is what
+            // lets the split math in Home, Groups, and Group Detail treat
+            // an expense as either "you paid, they owe you" or "someone
+            // else paid, you owe them" without a separate flag.
             String paidBy = paidByRaw.isEmpty() ? "You" : paidByRaw;
 
+            // Split "Split With" on commas into a real List<String>, not
+            // just a display string — this is what Group Detail and
+            // Groups actually loop over to compute each person's share.
             String splitNames = splitNamesRaw.replaceAll("\\s*,\\s*", ", ").trim();
 
             List<String> splitNamesList = new ArrayList<>();
@@ -117,6 +124,11 @@ public class AddExpenseActivity extends AppCompatActivity {
 
             boolean isIncoming = "Settled".equalsIgnoreCase(selectedStatus);
 
+            // Every expense is tagged with the signed-in user's Firebase
+            // UID. Firestore's security rules only allow reading or
+            // writing a document where this field matches the requesting
+            // user, which is what keeps each user's data private from
+            // every other signed-in user.
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
